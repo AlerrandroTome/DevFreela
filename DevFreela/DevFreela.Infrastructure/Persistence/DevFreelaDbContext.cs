@@ -16,9 +16,9 @@ namespace DevFreela.Infrastructure.Persistence
             };
             Users = new List<User> 
             {
-                new User("Alerrandro Tome", "alerrandro@gmail.com", new DateTime(2002, 4, 23)),
-                new User("Robert C Martin", "robert@gmail.com", new DateTime(1950, 1, 1)),
-                new User("Anderson", "anderson@gmail.com", new DateTime(1980, 1, 1)),
+                new User("Alerrandro Tome", "alerrandro@gmail.com", "alerrandro", "123", new DateTime(2002, 4, 23)),
+                new User("Robert C Martin", "robert@gmail.com", "robert", "123", new DateTime(1950, 1, 1)),
+                new User("Anderson", "anderson@gmail.com", "anderson", "123", new DateTime(1980, 1, 1)),
             };
             Skills = new List<Skill> 
             {
@@ -29,6 +29,7 @@ namespace DevFreela.Infrastructure.Persistence
         }
 
         public List<Project> Projects { get; set; }
+        public List<ProjectComment> ProjectComments { get; set; }
         public List<User> Users { get; set; }
         public List<Skill> Skills { get; set; }
     }
