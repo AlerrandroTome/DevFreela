@@ -1,5 +1,8 @@
-﻿using DevFreela.API.Models;
+﻿using DevFreela.Application.InputModels;
+using DevFreela.Application.Services.Interfaces;
+using DevFreela.Application.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 
 namespace DevFreela.API.Controllers
 {
@@ -7,51 +10,84 @@ namespace DevFreela.API.Controllers
     [ApiController]
     public class ProjectsController : ControllerBase
     {
+        private readonly IProjectService _projectService;
+
+        public ProjectsController(IProjectService projectService)
+        {
+            _projectService = projectService;
+        }
+
         [HttpGet]
         public IActionResult Get(string query)
         {
-            return Ok();
+            List<ProjectViewModel> projects = _projectService.GetAll(query);
+            return Ok(projects);
         }
 
         [HttpGet("{id}")]
         public IActionResult GetById(int id)
         {
-            return Ok();
+            ProjectDetailsViewModel project = _projectService.GetById(id);
+            
+            if(project is null)
+            {
+                return NotFound();
+            }
+
+            return Ok(project);
         }
 
         [HttpPost]
-        public IActionResult Post([FromBody] CreateProjectModel createProjectsModel)
+        public IActionResult Post([FromBody] NewProjectInputModel createProjectModel)
         {
-            return CreatedAtAction(nameof(GetById), new { id = createProjectsModel.Id }, createProjectsModel);
+            if(createProjectModel.Title.Length > 50)
+            {
+                return BadRequest();
+            }
+
+            int id = _projectService.Create(createProjectModel);
+
+            return CreatedAtAction(nameof(GetById), new { id }, createProjectModel);
         }
 
-        [HttpPut]
-        public IActionResult Put([FromBody] UpdateProjectModel updateProjectsModel)
+        [HttpPut("{id}")]
+        public IActionResult Put(int id, [FromBody] UpdateProjectInputModel updateProjectModel)
         {
+            if (updateProjectModel.Description.Length > 200)
+            {
+                return BadRequest();
+            }
+
+            _projectService.Update(updateProjectModel);
+
             return NoContent();
         }
 
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
+            _projectService.Delete(id);
             return Ok();
         }
 
         [HttpPost("{id}/comments")]
-        public IActionResult PostComment([FromBody] CreateCommentModel createCommentModel)
+        public IActionResult PostComment([FromBody] CreateCommentInputModel createCommentModel)
         {
+            _projectService.CreateComment(createCommentModel);
             return NoContent();
         }
 
         [HttpPut("{id}/start")]
         public IActionResult Start(int id)
         {
+            _projectService.Start(id);
             return NoContent();
         }
 
         [HttpPut("{id}/finish")]
         public IActionResult Finish(int id)
         {
+            _projectService.Finish(id);
             return NoContent();
         }
     }

@@ -45,13 +45,20 @@ namespace DevFreela.Application.Services.Implementations
         public List<ProjectViewModel> GetAll(string query)
         {
             List<Project> projects = _dbContext.Projects;
-            List<ProjectViewModel> projectsViewModel = projects.Select(p => new ProjectViewModel(p.Id, p.Title, p.CreatedAt)).ToList();
+            List<ProjectViewModel> projectsViewModel = projects.Select(p => new ProjectViewModel(p.Id, p.Title, p.CreatedAt))
+                                                               .ToList();
             return projectsViewModel;
         }
 
         public ProjectDetailsViewModel GetById(int id)
         {
             Project project = _dbContext.Projects.SingleOrDefault(p => p.Id == id);
+            
+            if(project is null)
+            {
+                return null;
+            }
+
             ProjectDetailsViewModel projectDetailsViewModel = new ProjectDetailsViewModel(project.Id, project.Title, project.Description, project.TotalCost, project.StartedAt, project.FinisedAt);
             return projectDetailsViewModel;
         }

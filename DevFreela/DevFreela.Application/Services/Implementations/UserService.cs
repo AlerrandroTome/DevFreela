@@ -35,6 +35,12 @@ namespace DevFreela.Application.Services.Implementations
         public UserDetailsViewModel GetById(int id)
         {
             User user = _dbContext.Users.SingleOrDefault(p => p.Id == id);
+
+            if(user is null)
+            {
+                return null;
+            }
+
             UserDetailsViewModel userDetailsViewModel = new UserDetailsViewModel(user.Id, user.FullName, user.Email, user.Username, user.BirthDate, user.CreatedAt, user.Active);
             return userDetailsViewModel;
         }
