@@ -21,13 +21,14 @@ namespace DevFreela.Application.Services.Implementations
         {
             User user = new User(inputModel.FullName, inputModel.Email, inputModel.Username, inputModel.Password, inputModel.BirthDate);
             _dbContext.Users.Add(user);
-            
+            _dbContext.SaveChanges();
+
             return user.Id;
         }
 
         public List<UserViewModel> GetAll(string query)
         {
-            List<User> users = _dbContext.Users;
+            List<User> users = _dbContext.Users.ToList();
             List<UserViewModel> usersViewModel = users.Select(u => new UserViewModel(u.FullName, u.Email, u.Username, u.BirthDate, u.CreatedAt, u.Active)).ToList();
             return usersViewModel;
         }
