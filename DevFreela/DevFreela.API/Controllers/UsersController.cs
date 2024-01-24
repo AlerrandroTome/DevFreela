@@ -1,9 +1,12 @@
-﻿using DevFreela.API.Models;
-using DevFreela.Application.InputModels;
-using DevFreela.Application.Services.Interfaces;
+﻿using DevFreela.Application.Commands.CreateUser;
+using DevFreela.Application.Commands.Login;
+using DevFreela.Application.Queries.GetAllUsers;
+using DevFreela.Application.Queries.GetUser;
 using DevFreela.Application.ViewModels;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace DevFreela.API.Controllers
 {
@@ -11,24 +14,26 @@ namespace DevFreela.API.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        private readonly IUserService _userService;
+        private readonly IMediator _mediator;
 
-        public UsersController(IUserService userService)
+        public UsersController(IMediator mediator)
         {
-            _userService = userService;
+            _mediator = mediator;
         }
 
         [HttpGet]
-        public IActionResult Get(string query)
+        public async Task<IActionResult> GetAsync(string query)
         {
-            List<UserViewModel> users = _userService.GetAll(query);
+            GetAllUsersQuery getAllUsersQuery = new GetAllUsersQuery(query);
+            List<UserViewModel> users = await _mediator.Send(getAllUsersQuery);
             return Ok(users);
         }
 
         [HttpGet("{id}")]
-        public IActionResult GetById(int id)
+        public async Task<IActionResult> GetByIdAsync(int id)
         {
-            UserDetailsViewModel user = _userService.GetById(id);
+            GetUserByIdQuery query = new GetUserByIdQuery(id);
+            UserDetailsViewModel user = await _mediator.Send(query);
             
             if(user is null)
             {
@@ -39,15 +44,16 @@ namespace DevFreela.API.Controllers
         }
 
         [HttpPost]
-        public IActionResult Post([FromBody] NewUserInputModel createUserModel)
+        public async Task<IActionResult> Post([FromBody] CreateUserCommand command)
         {
-            int id = _userService.Create(createUserModel);
-            return CreatedAtAction(nameof(GetById), new { id }, createUserModel);
+            int id = await _mediator.Send(command);
+            return CreatedAtAction(nameof(GetByIdAsync), new { id }, command);
         }
 
         [HttpPut("{id}/login")]
-        public IActionResult Login(int id, [FromBody] LoginModel loginModel)
+        public async Task<IActionResult> LoginAsync(int id, [FromBody] LoginCommandHandler command)
         {
+            await _mediator.Send(command);
             return NoContent();
         }
     }

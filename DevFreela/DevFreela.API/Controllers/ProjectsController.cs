@@ -1,9 +1,11 @@
 ﻿using DevFreela.Application.Commands.CreateComment;
 using DevFreela.Application.Commands.CreateProject;
 using DevFreela.Application.Commands.DeleteProject;
+using DevFreela.Application.Commands.FinishProject;
+using DevFreela.Application.Commands.StartProject;
 using DevFreela.Application.Commands.UpdateProject;
 using DevFreela.Application.Queries.GetAllProjects;
-using DevFreela.Application.Services.Interfaces;
+using DevFreela.Application.Queries.GetProjectById;
 using DevFreela.Application.ViewModels;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -16,12 +18,11 @@ namespace DevFreela.API.Controllers
     [ApiController]
     public class ProjectsController : ControllerBase
     {
-        private readonly IProjectService _projectService;
         private readonly IMediator _mediator;
 
-        public ProjectsController(IProjectService projectService, IMediator mediator)
+        public ProjectsController(IMediator mediator)
         {
-            _projectService = projectService;
+            _mediator = mediator;
         }
 
         [HttpGet]
@@ -33,9 +34,10 @@ namespace DevFreela.API.Controllers
         }
 
         [HttpGet("{id}")]
-        public IActionResult GetById(int id)
+        public async Task<IActionResult> GetById(int id)
         {
-            ProjectDetailsViewModel project = _projectService.GetById(id);
+            GetProjectByIdQuery query = new GetProjectByIdQuery(id);
+            ProjectDetailsViewModel project = await _mediator.Send(query);
             
             if(project is null)
             {
@@ -88,16 +90,18 @@ namespace DevFreela.API.Controllers
         }
 
         [HttpPut("{id}/start")]
-        public IActionResult Start(int id)
+        public async Task<IActionResult> StartAsync(int id)
         {
-            _projectService.Start(id);
+            StartProjectCommand command = new StartProjectCommand(id);
+            await _mediator.Send(id);
             return NoContent();
         }
 
         [HttpPut("{id}/finish")]
-        public IActionResult Finish(int id)
+        public async Task<IActionResult> Finish(int id)
         {
-            _projectService.Finish(id);
+            FinishProjectCommand command = new FinishProjectCommand(id);
+            await _mediator.Send(id);
             return NoContent();
         }
     }
