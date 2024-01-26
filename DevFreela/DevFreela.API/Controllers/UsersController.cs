@@ -6,6 +6,7 @@ using DevFreela.Application.ViewModels;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace DevFreela.API.Controllers
@@ -51,7 +52,7 @@ namespace DevFreela.API.Controllers
         }
 
         [HttpPut("{id}/login")]
-        public async Task<IActionResult> LoginAsync(int id, [FromBody] LoginCommandHandler command)
+        public async Task<IActionResult> LoginAsync(int id, [FromBody] LoginCommand command)
         {
             await _mediator.Send(command);
             return NoContent();
