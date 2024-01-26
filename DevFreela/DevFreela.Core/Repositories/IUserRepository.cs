@@ -8,5 +8,6 @@ namespace DevFreela.Core.Repositories
     {
         Task<List<User>> GetAllAsync();
         Task<User> GetByIdAsync(int id);
+        Task AddAsync(User user);
     }
 }
