@@ -1,10 +1,11 @@
-﻿using MediatR;
+﻿using DevFreela.Application.ViewModels;
+using MediatR;
 
 namespace DevFreela.Application.Commands.Login
 {
-    public class LoginCommand : IRequest<bool>
+    public class LoginCommand : IRequest<UserLoginViewModel>
     {
-        public string Username { get; set; }
+        public string Email { get; set; }
         public string Password { get; set; }
     }
 }

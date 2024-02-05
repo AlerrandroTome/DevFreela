@@ -1,26 +1,36 @@
-﻿using DevFreela.Infrastructure.Persistence;
+﻿using DevFreela.Application.ViewModels;
+using DevFreela.Core.Entities;
+using DevFreela.Core.Interfaces;
+using DevFreela.Core.Repositories;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace DevFreela.Application.Commands.Login
 {
-    public class LoginCommandHandler : IRequestHandler<LoginCommand, bool>
+    public class LoginCommandHandler : IRequestHandler<LoginCommand, UserLoginViewModel>
     {
-        private readonly DevFreelaDbContext _dbContext;
+        private readonly IUserRepository _userRepository;
+        private readonly IAuthService _authService;
 
-        public LoginCommandHandler(DevFreelaDbContext dbContext)
+        public LoginCommandHandler(IUserRepository userRepository, IAuthService authService)
         {
-            _dbContext = dbContext;
+            _userRepository = userRepository;
+            _authService = authService;
         }
 
-        public async Task<bool> Handle(LoginCommand request, CancellationToken cancellationToken)
+        public async Task<UserLoginViewModel> Handle(LoginCommand request, CancellationToken cancellationToken)
         {
+            string passwordHash = _authService.ComputeSha256Hash(request.Password);
+            User user = await _userRepository.GetByEmailAndPasswordAsync(request.Email, passwordHash);
+            if (user == null) 
+            { 
+                return null; 
+            }
 
-            return await _dbContext.Users.AnyAsync(u => u.Active
-                                            && u.Username.Equals(request.Username)
-                                            && u.Password.Equals(request.Password));
+            string token = _authService.GenerateJwtToken(user.Email, user.Role);
+
+            return new UserLoginViewModel(request.Email, token);
         }
     }
 }

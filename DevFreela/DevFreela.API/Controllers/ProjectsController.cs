@@ -8,6 +8,7 @@ using DevFreela.Application.Queries.GetAllProjects;
 using DevFreela.Application.Queries.GetProjectById;
 using DevFreela.Application.ViewModels;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,6 +18,7 @@ namespace DevFreela.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class ProjectsController : ControllerBase
     {
         private readonly IMediator _mediator;
@@ -86,6 +88,7 @@ namespace DevFreela.API.Controllers
         }
 
         [HttpPut("{id}/start")]
+        [Authorize(Roles = "Client")]
         public async Task<IActionResult> StartAsync(int id)
         {
             StartProjectCommand command = new StartProjectCommand(id);
@@ -94,6 +97,7 @@ namespace DevFreela.API.Controllers
         }
 
         [HttpPut("{id}/finish")]
+        [Authorize(Roles = "Client")]
         public async Task<IActionResult> Finish(int id)
         {
             FinishProjectCommand command = new FinishProjectCommand(id);
