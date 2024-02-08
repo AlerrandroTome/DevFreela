@@ -12,7 +12,6 @@ using System.Threading.Tasks;
 namespace DevFreela.API.Controllers
 {
     [Route("api/[controller]")]
-    [ApiController]
     [Authorize]
     public class UsersController : ControllerBase
     {
@@ -24,7 +23,7 @@ namespace DevFreela.API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAsync(string query)
+        public async Task<IActionResult> Get(string query)
         {
             GetAllUsersQuery getAllUsersQuery = new GetAllUsersQuery(query);
             List<UserViewModel> users = await _mediator.Send(getAllUsersQuery);
@@ -32,7 +31,7 @@ namespace DevFreela.API.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetByIdAsync(int id)
+        public async Task<IActionResult> GetById(int id)
         {
             GetUserByIdQuery query = new GetUserByIdQuery(id);
             UserDetailsViewModel user = await _mediator.Send(query);
@@ -50,15 +49,21 @@ namespace DevFreela.API.Controllers
         public async Task<IActionResult> Post([FromBody] CreateUserCommand command)
         {
             int id = await _mediator.Send(command);
-            return CreatedAtAction(nameof(GetByIdAsync), new { id }, command);
+            return CreatedAtAction(nameof(GetById), new { id = id }, command);
         }
 
         [HttpPut("login")]
         [AllowAnonymous]
-        public async Task<IActionResult> LoginAsync([FromBody] LoginCommand command)
+        public async Task<IActionResult> Login([FromBody] LoginCommand command)
         {
-            await _mediator.Send(command);
-            return NoContent();
+            UserLoginViewModel loginUserviewModel = await _mediator.Send(command);
+
+            if (loginUserviewModel == null)
+            {
+                return BadRequest();
+            }
+
+            return Ok(loginUserviewModel);
         }
     }
 }

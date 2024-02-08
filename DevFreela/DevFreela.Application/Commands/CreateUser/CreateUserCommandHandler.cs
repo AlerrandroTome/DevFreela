@@ -20,6 +20,7 @@ namespace DevFreela.Application.Commands.CreateUser
 
         public async Task<int> Handle(CreateUserCommand request, CancellationToken cancellationToken)
         {
+            request.Role = request.Role.ToLower();
             string passwordHash = _authService.ComputeSha256Hash(request.Password);
             User user = new User(request.FullName, request.Email, request.Username, passwordHash, request.Role, request.BirthDate);
             await _userRepository.AddAsync(user);

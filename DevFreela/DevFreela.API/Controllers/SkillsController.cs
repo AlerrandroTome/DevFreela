@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 namespace DevFreela.API.Controllers
 {
     [Route("api/[controller]")]
-    [ApiController]
     [Authorize]
     public class SkillsController : ControllerBase
     {

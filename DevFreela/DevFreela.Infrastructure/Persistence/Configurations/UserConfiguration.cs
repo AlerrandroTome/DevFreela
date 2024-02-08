@@ -13,6 +13,10 @@ namespace DevFreela.Infrastructure.Persistence.Configurations
                    .WithOne()
                    .HasForeignKey(fk => fk.IdSkill)
                    .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Property(p => p.Role)
+                   .HasConversion(v => v.ToLower(), 
+                                    v => v);
         }
     }
 }

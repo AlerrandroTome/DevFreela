@@ -22,15 +22,15 @@ namespace DevFreela.Infrastructure.Auth
         {
             using (SHA256 sha256Hash = SHA256.Create())
             {
-                // ComputeHash - retorna byte array
+                // ComputeHash - retorna byte array  
                 byte[] bytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(password));
 
-                // Converte byte array para string
+                // Converte byte array para string   
                 StringBuilder builder = new StringBuilder();
-                
+
                 for (int i = 0; i < bytes.Length; i++)
                 {
-                    builder.Append(bytes[i].ToString("x2")); // x2 Faz com que seja convertido em representação hexadecimal
+                    builder.Append(bytes[i].ToString("x2")); // x2 faz com que seja convertido em representação hexadecimal
                 }
 
                 return builder.ToString();
@@ -41,7 +41,7 @@ namespace DevFreela.Infrastructure.Auth
         {
             string issuer = _configuration["Jwt:Issuer"];
             string audience = _configuration["Jwt:Audience"];
-            string key = _configuration["Jwt:Audience"];
+            string key = _configuration["Jwt:Key"];
             
             SymmetricSecurityKey securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key));
             SigningCredentials credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
