@@ -78,6 +78,13 @@ namespace DevFreela.Infrastructure.Persistence.Repositories
             await _dbContext.SaveChangesAsync();
         }
 
+        public async Task SetPaymentPendind(int id)
+        {
+            Project project = await _dbContext.Projects.SingleOrDefaultAsync(p => p.Id == id);
+            project.SetPaymentPending();
+            await _dbContext.SaveChangesAsync();
+        }
+
         public async Task CreateCommentAsync(ProjectComment projectComment)
         {
             await _dbContext.ProjectComments.AddAsync(projectComment);

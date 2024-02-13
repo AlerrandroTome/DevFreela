@@ -25,7 +25,7 @@ namespace DevFreela.Application.Queries.GetProjectById
                 return null;
             }
 
-            ProjectDetailsViewModel projectDetailsViewModel = new ProjectDetailsViewModel(project.Id, project.Title, project.Description, project.TotalCost, project.StartedAt, project.FinisedAt, project.Client.FullName, project.Freelancer.FullName);
+            ProjectDetailsViewModel projectDetailsViewModel = new ProjectDetailsViewModel(project.Id, project.Title, project.Description, project.TotalCost, project.StartedAt, project.FinishedAt, project.Client.FullName, project.Freelancer.FullName);
             return projectDetailsViewModel;
         }
     }
